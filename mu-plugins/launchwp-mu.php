@@ -8,8 +8,16 @@ Version: 1.0
 Author URI: https://launchwp.io
 */
 
-if ( ! defined( 'ABSPATH' ) || defined( 'LAUNCHWP_HELPER_ACTIVE' ) ) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+    return;
+}
+
+if ( ! function_exists( 'is_plugin_active' ) ) {
+    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+}
+
+if ( is_plugin_active( 'launchwp/launchwp.php' ) ) {
+    return;
 }
 
 /**
@@ -17,18 +25,20 @@ if ( ! defined( 'ABSPATH' ) || defined( 'LAUNCHWP_HELPER_ACTIVE' ) ) {
  *
  * @return bool
  */
-$powered_by = $_SERVER['HTTP_X_POWERED_BY'] ?? '';
+$powered_by = isset($_SERVER['HTTP_X_POWERED_BY']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_X_POWERED_BY'])) : '';
 
 if ( ! empty( $powered_by ) && stripos( $powered_by, 'LaunchWP.io' ) !== false ) {
     add_action( 'admin_notices', function() {
         $class = 'notice notice-info';
+
         $message = sprintf(
+			/* translators: 1: LaunchWP website URL, 2: Opening link tag for helper plugin, 3: Closing link tag */
             __('This site is powered by <a href="%1$s" target="_blank">LaunchWP</a>. The LaunchWP Helper plugin is designed to intelligently flush cache and ensure correct sync with LaunchWP backend. Please %2$sinstall and active the helper plugin%3$s.', 'launchwp'),
             'https://launchwp.io',
-            '<a href="">',
+            '<a href="https://github.com/Rajinsharwar/launchwp" target="_blank">',
             '</a>'
         );
 
-        printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), $message);
+        printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), wp_kses_post( $message ) );
     } );
 }

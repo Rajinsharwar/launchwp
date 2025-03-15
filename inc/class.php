@@ -38,7 +38,7 @@ class Main {
      * @return bool
      */
     private function is_launchwp() {
-        $powered_by = $_SERVER['HTTP_X_POWERED_BY'] ?? '';
+        $powered_by = isset($_SERVER['HTTP_X_POWERED_BY']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_X_POWERED_BY'])) : '';
         return !empty($powered_by) && stripos($powered_by, 'LaunchWP.io') !== false;
     }
 
@@ -48,13 +48,37 @@ class Main {
     public function display_not_launchwp_notice() {
         $class = 'notice notice-error';
         $message = sprintf(
+            /* translators: 1: LaunchWP website URL, 2: Opening link tag for deactivation, 3: Closing link tag */
             __('This site is not powered by <a href="%1$s" target="_blank">LaunchWP</a>. The LaunchWP Helper plugin is designed to work exclusively with LaunchWP-powered websites. Please %2$sdeactivate this plugin%3$s.', 'launchwp'),
             'https://launchwp.io',
-            '<a href="' . esc_url(wp_nonce_url(admin_url('plugins.php?action=deactivate&plugin=launchwp-helper-plugin/launchwp.php'), 'deactivate-plugin_launchwp-helper-plugin/launchwp.php')) . '">',
+            '<a href="' . esc_url(wp_nonce_url(admin_url('plugins.php?action=deactivate&plugin=launchwp/launchwp.php'), 'deactivate-plugin_launchwp-helper-plugin/launchwp.php')) . '">',
             '</a>'
         );
 
-        printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), $message);
+        printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), wp_kses_post($message));
+    }
+
+    /**
+     * Get the current environment type (staging or live)
+     *
+     * @return array Array containing environment type and label
+     */
+    private function get_environment() {
+        if (!$this->is_launchwp()) {
+            return [
+                'type' => 'unknown',
+                'label' => 'UNKNOWN'
+            ];
+        }
+
+        $site_domain = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'])) : '';
+        $env_type = preg_match('/^stg-\d+\.launchwp\.site$/', $site_domain) ? 'staging' : 'live';
+        $env_label = $env_type === 'staging' ? 'STAGING' : 'LIVE';
+
+        return [
+            'type' => $env_type,
+            'label' => $env_label
+        ];
     }
 
     /**
@@ -63,20 +87,13 @@ class Main {
      * @param \WP_Admin_Bar $admin_bar
      */
     public function add_environment_indicator($admin_bar) {
-        if (!$this->is_launchwp()) {
-            $env_type = 'unknown';
-            $env_label = 'UNKNOWN';
-        } else {
-            $site_domain = $_SERVER['HTTP_HOST'];
-            $env_type = preg_match('/^stg-\d+\.launchwp\.site$/', $site_domain) ? 'staging' : 'live';
-            $env_label = $env_type === 'staging' ? 'STAGING' : 'LIVE';
-        }
+        $environment = $this->get_environment();
 
         $admin_bar->add_node([
             'id'    => 'launchwp-environment',
             'title' => sprintf('<span class="launchwp-env launchwp-env-%s">%s</span>', 
-                             esc_attr($env_type), 
-                             esc_html($env_label)),
+                             esc_attr($environment['type']), 
+                             esc_html($environment['label'])),
             'href'  => '#',
             'meta'  => [
                 'class' => 'launchwp-environment-indicator'
@@ -143,13 +160,13 @@ class Main {
             if (!$post_url) return;
 
             // Parse URL to extract path and query
-            $parsed_url = parse_url($post_url);
+            $parsed_url = wp_parse_url($post_url);
             $request_uri = $parsed_url['path'] ?? '/';
             if (!empty($parsed_url['query'])) {
                 $request_uri .= '?' . $parsed_url['query'];
             }
 
-            $host = parse_url(home_url(), PHP_URL_HOST);
+            $host = wp_parse_url(home_url(), PHP_URL_HOST);
             
             // Generate cache keys for both HTTP and HTTPS variations
             $cache_keys = [
@@ -172,7 +189,9 @@ class Main {
 
             $redis->close();
         } catch (\Exception $e) {
-            error_log('LaunchWP Redis Cache Flush Error: ' . $e->getMessage());
+            if ( 'staging' === $this->get_environment() ) {
+                error_log('LaunchWP Redis Cache Flush Error: ' . $e->getMessage() );
+            }
         }
     }
 }

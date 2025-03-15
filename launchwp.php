@@ -7,6 +7,7 @@ Author:       LaunchWP
 Version:      1.0.1
 Network:      True
 Text Domain:  launchwp
+License:      GPLV3
 Requires PHP: 7.1
 Requires WP:  4.7
 */
@@ -20,6 +21,19 @@ define( 'LAUNCHWP_HELPER_ACTIVE', true );
 
 // Require the main plugin class
 require_once plugin_dir_path(__FILE__) . 'inc/class.php';
+
+register_activation_hook( __FILE__, 'launchwp_after_active_actions_launchwp' );
+
+/**
+ * Perform actions on plugin activation.
+ */
+function launchwp_after_active_actions_launchwp() {
+    $plugin_path   = untrailingslashit( dirname( __FILE__ ) );
+    $wpmu_dir      = untrailingslashit( WPMU_PLUGIN_DIR );
+
+    wp_mkdir_p( $wpmu_dir );
+    @copy( $plugin_path . '/mu-plugins/launchwp-mu.php', $wpmu_dir . '/launchwp-mu.php' );
+}
 
 // Initialize the plugin
 add_action('plugins_loaded', function() {
