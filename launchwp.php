@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'LAUNCHWP_HELPER_ACTIVE', true );
+$plugin_version = get_file_data( __FILE__, array( 'Version' => 'Version' ), false )[ 'Version' ];
+define( 'LAUNCHWP_HELPER_VERSION', $plugin_version );
 
 // Require the main plugin class
 require_once plugin_dir_path(__FILE__) . 'inc/class.php';

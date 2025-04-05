@@ -107,31 +107,12 @@ class Main {
      * Add styles for environment indicator
      */
     public function add_environment_styles() {
-        ?>
-        <style>
-            #wp-admin-bar-launchwp-environment .launchwp-env {
-                display: inline-block;
-                padding: 3px 8px;
-                border-radius: 3px;
-                font-weight: bold;
-            }
-            #wp-admin-bar-launchwp-environment .launchwp-env-live {
-                background-color: #28a745;
-                color: #ffffff;
-            }
-            #wp-admin-bar-launchwp-environment .launchwp-env-staging {
-                background-color: #ffc107;
-                color: #000000;
-            }
-            #wp-admin-bar-launchwp-environment .launchwp-env-unknown {
-                background-color: #dc3545;
-                color: #ffffff;
-            }
-            #wp-admin-bar-launchwp-environment {
-                cursor: default;
-            }
-        </style>
-        <?php
+        wp_enqueue_style(
+            'launchwp-environment-styles',
+            plugin_dir_url(dirname(__FILE__)) . 'assets/css/admin.css',
+            [],
+            LAUNCHWP_HELPER_VERSION
+        );
     }
 
     public function set_default_admin_color( $color_scheme ) {

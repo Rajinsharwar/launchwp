@@ -9,7 +9,7 @@ Author URI: https://launchwp.io
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
-    return;
+    exit;
 }
 
 if ( ! function_exists( 'is_plugin_active' ) ) {

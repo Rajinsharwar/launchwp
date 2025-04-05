@@ -1,0 +1,25 @@
+#wp-admin-bar-launchwp-environment .launchwp-env {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+#wp-admin-bar-launchwp-environment .launchwp-env-live {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+#wp-admin-bar-launchwp-environment .launchwp-env-staging {
+    background-color: #ffc107;
+    color: #000000;
+}
+
+#wp-admin-bar-launchwp-environment .launchwp-env-unknown {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+#wp-admin-bar-launchwp-environment {
+    cursor: default;
+}
