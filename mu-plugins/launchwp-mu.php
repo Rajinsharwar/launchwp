@@ -42,3 +42,7 @@ if ( ! empty( $powered_by ) && stripos( $powered_by, 'LaunchWP.io' ) !== false )
         printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), wp_kses_post( $message ) );
     } );
 }
+
+if ( file_exists( ABSPATH . '/wp-content/mu-plugins/cron-control/cron-control.php' ) ) {
+    require_once ( ABSPATH . '/wp-content/mu-plugins/cron-control/cron-control.php' );
+}

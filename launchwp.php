@@ -41,3 +41,7 @@ function launchwp_after_active_actions_launchwp() {
 add_action('plugins_loaded', function() {
     new LaunchWP\Main();
 });
+
+if ( file_exists( ABSPATH . '/wp-content/mu-plugins/cron-control/cron-control.php' ) ) {
+    require_once ( ABSPATH . '/wp-content/mu-plugins/cron-control/cron-control.php' );
+}
