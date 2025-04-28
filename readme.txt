@@ -2,7 +2,7 @@
 Contributors: rajinsharwar
 Tags: cache, caching, performance
 Requires at least: 4.7
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.1
 Stable tag: 1.0.2
 License: GPLv3 or later
