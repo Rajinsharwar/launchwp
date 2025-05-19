@@ -4,7 +4,7 @@ Tags: cache, caching, performance
 Requires at least: 4.7
 Tested up to: 6.8
 Requires PHP: 7.1
-Stable tag: 1.0.2
+Stable tag: 1.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,3 +93,7 @@ Invite your Team to manage your LaunchWP servers or sites. Access is granular, m
 
 = 1.0.2 (2025-04-27) =
 * Adding Cron Control
+
+= 1.1 (2025-05-19) =
+* Added cache flush for indiviual URLs.
+* Added cache flush programatically via PHP methods. Doc: https://launchwp.io/docs/flush-launchwp-cache-programmatically/

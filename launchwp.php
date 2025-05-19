@@ -4,7 +4,7 @@ Plugin Name:  LaunchWP
 Plugin URI:   https://launchwp.io
 Description:  LaunchWP helper plugin for LaunchWP powered WordPress websites.
 Author:       LaunchWP
-Version:      1.0.2
+Version:      1.1
 Network:      True
 Text Domain:  launchwp
 License:      GPLV3
